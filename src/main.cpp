@@ -12,6 +12,9 @@
 #include <Arduino.h>
 
 #define MESH_SERVICE_UUID "6ba1b218-15a8-461f-9fa8-5dcae273eafd"
+#define TORADIO_UUID "F75C76D2-129E-4DAD-A1DD-7866124401E7"
+#define FROMRADIO_UUID "8BA2BCC2-EE02-4A55-A531-C525C5E454D5"
+#define FROMNUM_UUID "ED9DA18C-A800-4F66-A670-AA7547E34453"
 
 void setup() {
   Serial.begin(115200);
@@ -27,9 +30,19 @@ void setup() {
   //NimBLECharacteristic *pNonSecureCharacteristic = bleService->createCharacteristic("1234", NIMBLE_PROPERTY::READ );
   NimBLECharacteristic *pSecureCharacteristic = bleService->createCharacteristic("1235", NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_ENC | NIMBLE_PROPERTY::READ_AUTHEN);
 
+  //define the characteristics that the app is looking for
+  NimBLECharacteristic *ToRadioCharacteristic = bleService->createCharacteristic(TORADIO_UUID, NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_AUTHEN | NIMBLE_PROPERTY::WRITE_ENC);
+  NimBLECharacteristic *FromRadioCharacteristic = bleService->createCharacteristic(FROMRADIO_UUID, NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::READ_AUTHEN | NIMBLE_PROPERTY::READ_ENC);
+  NimBLECharacteristic *FromNumCharacteristic = bleService->createCharacteristic(FROMNUM_UUID, NIMBLE_PROPERTY::NOTIFY);
+  
+  
+
   bleService->start();
   //pNonSecureCharacteristic->setValue("Hello Non Secure BLE");
   pSecureCharacteristic->setValue("Hello Secure BLE");
+
+  FromRadioCharacteristic->setValue("FromRadioString");
+  //ToRadioCharacteristic->setCallbacks()
 
   NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(MESH_SERVICE_UUID);
